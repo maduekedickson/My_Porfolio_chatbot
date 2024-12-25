@@ -83,6 +83,5 @@ if user_input:
         # Add bot response to chat history
         st.session_state.chat_history.append({"role": "bot", "text": bot_response})
 
-    # Reset the input field after message submission
-    st.query_params(message="")
-
+    # Reset the input field by clearing the session state key
+    del st.session_state["user_input"]
