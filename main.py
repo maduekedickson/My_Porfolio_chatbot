@@ -44,7 +44,7 @@ def initialize_chat(content):
 st.title("💬 Schoolville Content-Based Chatbot")
 
 # Get content from URL
-url = "https://www.schoolville.com"
+url = "https://madueke-portfolio.web.app"
 content = get_website_content(url)
 
 if content:
