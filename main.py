@@ -44,9 +44,11 @@ def generate_response(prompt, content):
 # Streamlit App
 st.title("💬 Madueke Portfolio Chatbot")
 
+# Initialize session state for chat history
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
+# Fetch website content
 url = "https://madueke-portfolio.web.app/"
 content = get_website_content(url)
 
@@ -55,18 +57,31 @@ if "Error" in content:
 else:
     st.write("Website content successfully retrieved.")
 
-for message in st.session_state.chat_history:
-    if message["role"] == "user":
-        st.markdown(f"**🧑 You:** {message['text']}")
-    elif message["role"] == "bot":
-        st.markdown(f"**🤖 Bot:** {message['text']}")
+# Display chat history
+chat_container = st.container()
+with chat_container:
+    for message in st.session_state.chat_history:
+        if message["role"] == "user":
+            st.markdown(f"**🧑 You:** {message['text']}")
+        elif message["role"] == "bot":
+            st.markdown(f"**🤖 Bot:** {message['text']}")
 
+# Input Section
 user_input = st.text_input("Type your message here:")
 
 if user_input:
+    # Add user message to chat history
     st.session_state.chat_history.append({"role": "user", "text": user_input})
+
+    # Simulate typing
     with st.spinner("🤖 Bot is typing..."):
         time.sleep(2)
+
+        # Generate bot response
         bot_response = generate_response(user_input, content)
+
+        # Add bot response to chat history
         st.session_state.chat_history.append({"role": "bot", "text": bot_response})
-    st.experimental_rerun()
+
+    # Clear the input box after sending the message
+    st.experimental_set_query_params(message="")
