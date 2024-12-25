@@ -69,7 +69,7 @@ if user_input:
         chat = model.start_chat(
             history=[
                 {"role": "user", "parts": "Here's some content to guide the conversation:"},
-               nmmm {"role": "model", "parts": content},
+               {"role": "model", "parts": content},
                 {"role": "user", "parts": user_input},
             ]
         )
