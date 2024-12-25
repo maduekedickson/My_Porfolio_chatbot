@@ -2,15 +2,10 @@ import streamlit as st
 import google.generativeai as genai
 import requests
 from bs4 import BeautifulSoup
-import os
 import time
 
 # Initialize Gemini Pro API
-api_key = os.getenv("AIzaSyCbknlcRQiRQ5B1JtodNeCFHJeAxYJFD0E")
-if not api_key:
-    st.error("API key not found! Please set it as an environment variable.")
-else:
-    genai.configure(api_key=api_key)
+genai.configure(api_key="AIzaSyCbknlcRQiRQ5B1JtodNeCFHJeAxYJFD0E")
 
 # Web scraping the content of the URL
 def get_website_content(url):
@@ -18,70 +13,65 @@ def get_website_content(url):
         response = requests.get(url)
         soup = BeautifulSoup(response.content, 'html.parser')
 
+        # Extract headings, paragraphs, and lists
         headings = soup.find_all(['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])
         paragraphs = soup.find_all('p')
         lists = soup.find_all(['ul', 'ol'])
 
+        # Combine headings, paragraphs, and list items into a single string
         content = ''
-        content += '\n'.join([heading.get_text() for heading in headings]) + "\n\n"
-        content += '\n'.join([para.get_text() for para in paragraphs]) + "\n\n"
+        content += '\n'.join([heading.get_text() for heading in headings])
+        content += '\n'.join([para.get_text() for para in paragraphs])
         content += '\n'.join([li.get_text() for list_tag in lists for li in list_tag.find_all('li')])
 
         return content
     except Exception as e:
         return f"Error fetching content from the URL: {e}"
 
-# Generate response from Gemini API
-def generate_response(prompt, content):
-    try:
-        model = genai.GenerativeModel("gemini-1.5-flash")
-        full_prompt = f"{content}\n\nUser: {prompt}\nBot:"
-        response = model.generate_text(prompt=full_prompt)
-        return response.candidates[0]["output"] if response and response.candidates else "No response generated."
-    except Exception as e:
-        return f"Error generating response: {e}"
+# Chatbot setup
+def initialize_chat(content):
+    model = genai.GenerativeModel("gemini-1.5-flash")
+    chat = model.start_chat(
+        history=[
+            {"role": "user", "parts": "Hello, I would like to know about the courses offered at Schoolville."},
+            {"role": "model", "parts": "Sure! Based on the content from Schoolville, here's what I found:"},
+            {"role": "model", "parts": content},  # Feed content as part of chat history
+        ]
+    )
+    return chat
 
 # Streamlit App
-st.title("💬 Madueke Portfolio Chatbot")
+st.title("💬 Schoolville Content-Based Chatbot")
 
-# Initialize session state for chat history
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []
-
-# Fetch website content
-url = "https://madueke-portfolio.web.app/"
+# Get content from URL
+url = "https://www.schoolville.com"
 content = get_website_content(url)
 
-if "Error" in content:
-    st.write("Failed to fetch content from the website.")
+if content:
+    st.write("Content successfully retrieved from Schoolville.")
 else:
-    st.write("Website content successfully retrieved.")
-
-# Display chat history
-chat_container = st.container()
-with chat_container:
-    for message in st.session_state.chat_history:
-        if message["role"] == "user":
-            st.markdown(f"**🧑 You:** {message['text']}")
-        elif message["role"] == "bot":
-            st.markdown(f"**🤖 Bot:** {message['text']}")
+    st.write("Failed to fetch content from Schoolville.")
 
 # Input Section
-user_input = st.text_input("Type your message here:", key="user_input")
+user_input = st.text_input("Ask a question about the content above:")
 
+# Placeholder for chatbot response
+response_placeholder = st.empty()
+
+# Process input and get chatbot response
 if user_input:
-    # Add user message to chat history
-    st.session_state.chat_history.append({"role": "user", "text": user_input})
-
-    # Simulate typing
-    with st.spinner("🤖 Bot is typing..."):
-        time.sleep(2)
-
-        # Generate bot response
-        bot_response = generate_response(user_input, content)
-
-        # Add bot response to chat history
-        st.session_state.chat_history.append({"role": "bot", "text": bot_response})
-
-    # Reset the input field by clearing the session state key
-    del st.session_state["user_input"]
+    # Display "Typing..." message
+    with response_placeholder:
+        st.write("🤖 Typing...")
+    
+    # Simulate delay
+    time.sleep(2)
+    
+    # Initialize chat with content
+    chat = initialize_chat(content)
+    
+    # Get response from Gemini API based on the user's question and website content
+    response = chat.send_message(user_input)
+    
+    # Display the response
+    response_placeholder.write(f"🤖: {response.text}")
