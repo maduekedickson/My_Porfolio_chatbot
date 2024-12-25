@@ -67,7 +67,7 @@ with chat_container:
             st.markdown(f"**🤖 Bot:** {message['text']}")
 
 # Input Section
-user_input = st.text_input("Type your message here:")
+user_input = st.text_input("Type your message here:", key="user_input")
 
 if user_input:
     # Add user message to chat history
@@ -83,5 +83,6 @@ if user_input:
         # Add bot response to chat history
         st.session_state.chat_history.append({"role": "bot", "text": bot_response})
 
-    # Clear the input box after sending the message
-    st.experimental_set_query_params(message="")
+    # Reset the input field after message submission
+    st.query_params(message="")
+
