@@ -93,9 +93,8 @@ if content and user_input:
     chat = initialize_chat(content)
     if chat:
         try:
-            # Refine the question for better responses
-            refined_input = f"Answer the following question directly: {user_input}"
-            response = chat.send_message(refined_input)
+            # Get response from Gemini API
+            response = chat.send_message(user_input)
             response_placeholder.write(f"🤖: {response.text}")
         except Exception as e:
             response_placeholder.write(f"Error during chatbot interaction: {e}")
