@@ -37,16 +37,16 @@ def get_website_content(url):
 
 # Initialize the chatbot with content
 def initialize_chat(content):
-    try:
-        model = genai.GenerativeModel("gemini-1.5-flash")
-        chat = model.start_chat(
-            history=[
-                {"role": "user", "content": "Hello, I would like to know about the courses offered at Schoolville."},
-                {"role": "model", "content": "Sure! Based on the content from Schoolville, here's what I found:"},
-                {"role": "model", "content": content},  # Feed content as part of chat history
-            ]
-        )
-        return chat
+    model = genai.GenerativeModel("gemini-1.5-flash")
+    chat = model.start_chat(
+        history=[
+            {"role": "user", "parts": ["Hello, I would like to know about the courses offered at Schoolville."]},
+            {"role": "model", "parts": ["Sure! Based on the content from Schoolville, here's what I found:"]},
+            {"role": "model", "parts": [content]},  # Feed content as part of chat history
+        ]
+    )
+    return chat
+
     except Exception as e:
         st.error(f"Failed to initialize chatbot: {e}")
         return None
