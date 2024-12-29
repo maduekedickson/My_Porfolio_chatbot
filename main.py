@@ -26,7 +26,7 @@ def get_website_content(url):
 
         return content
     except Exception as e:
-        return f"Error fetching content from the URL: {e}"
+        return None, f"Error fetching content from the URL: {e}"
 
 # Initialize the chatbot with content
 def initialize_chat(content):
@@ -46,22 +46,33 @@ def initialize_chat(content):
 
 # Streamlit App
 st.title("💬 My Portfolio Content-Based Chatbot 💬")
-st.text("https://madueke-portfolio.web.app")
+
+# Display website link in an appealing way
+st.markdown(
+    """
+    **Portfolio Link:**  
+    👉 [Madueke Portfolio](https://madueke-portfolio.web.app)
+    """
+)
 
 # Fetch content from the portfolio website
 url = "https://madueke-portfolio.web.app"
-content = get_website_content(url)
+content, error_message = get_website_content(url)
 
-if "Error" not in content:
+if content:
     st.success("Content successfully retrieved from Madueke Portfolio.")
 else:
-    st.error(content)
+    st.error(error_message)
 
 # Input Section
-user_input = st.text_input("Ask a question about the portfolio:")
+if content:
+    st.write("### Ask a question about the portfolio:")
+    user_input = st.text_input("Type your question here:")
+else:
+    st.write("No content available for chatbot interaction due to an error in retrieval.")
 
 # Chatbot interaction
-if user_input:
+if content and user_input:
     response_placeholder = st.empty()
     with response_placeholder:
         st.write("🤖 Typing...")
@@ -69,17 +80,14 @@ if user_input:
     # Simulate delay
     time.sleep(2)
 
-    # Initialize chat if not already done
-    if "Error" not in content:
-        chat = initialize_chat(content)
-        if chat:
-            try:
-                # Get response from Gemini API
-                response = chat.send_message(user_input)
-                response_placeholder.write(f"🤖: {response.text}")
-            except Exception as e:
-                response_placeholder.write(f"Error during chatbot interaction: {e}")
-        else:
-            response_placeholder.write("Chatbot initialization failed.")
+    # Initialize chat
+    chat = initialize_chat(content)
+    if chat:
+        try:
+            # Get response from Gemini API
+            response = chat.send_message(user_input)
+            response_placeholder.write(f"🤖: {response.text}")
+        except Exception as e:
+            response_placeholder.write(f"Error during chatbot interaction: {e}")
     else:
-        response_placeholder.write("No content available for chatbot interaction.")
+        response_placeholder.write("Chatbot initialization failed.")
