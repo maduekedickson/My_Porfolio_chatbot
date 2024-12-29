@@ -66,7 +66,7 @@ else:
 
 # Input Section
 if content:
-    st.write("### Ask a question about the portfolio:")
+    st.write("### Ask a question about the portfolio content:")
     user_input = st.text_input("Type your question here:")
 else:
     st.write("No content available for chatbot interaction due to an error in retrieval.")
