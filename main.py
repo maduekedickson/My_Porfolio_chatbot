@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import time
 
 # Initialize Gemini Pro API
-genai.configure(api_key="AIzaSyCbknlcRQiRQ5B1JtodNeCFHJeAxYJFD0E")
+genai.configure(api_key="AIzaSyDnLRWR5q1Wdcdj1PmZXqKhuypwsrsKGb8")
 
 # Web scraping the content of the URL
 def get_website_content(url):
@@ -41,19 +41,20 @@ def initialize_chat(content):
     return chat
 
 # Streamlit App
-st.title("💬 Schoolville Content-Based Chatbot")
+st.title("💬 My Portfolio Content-Based Chatbot 💬")
+st.text("https://madueke-portfolio.web.app")
 
 # Get content from URL
 url = "https://madueke-portfolio.web.app"
 content = get_website_content(url)
 
 if content:
-    st.write("Content successfully retrieved from Schoolville.")
+    st.write("Content successfully retrieved from Madueke Porfolio.")
 else:
-    st.write("Failed to fetch content from Schoolville.")
+    st.write("Failed to fetch content from the portfolio website.")
 
 # Input Section
-user_input = st.text_input("Ask a question about the content above:")
+user_input = st.text_input("Ask a question about the Madueke:")
 
 # Placeholder for chatbot response
 response_placeholder = st.empty()
