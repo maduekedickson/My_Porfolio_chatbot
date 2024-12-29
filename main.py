@@ -41,15 +41,16 @@ def initialize_chat(content):
         model = genai.GenerativeModel("gemini-1.5-flash")
         chat = model.start_chat(
             history=[
-                {"role": "user", "parts": ["Hello, I would like to know about the courses offered at Schoolville."]},
-                {"role": "model", "parts": ["Sure! Based on the content from Schoolville, here's what I found:"]},
-                {"role": "model", "parts": [content]},  # Feed content as part of chat history
+                {"role": "system", "parts": ["You are a helpful assistant. Respond concisely without redundant phrases."]},
+                {"role": "user", "parts": ["Here is the content to use for answering questions:"]},
+                {"role": "assistant", "parts": [content]},  # Provide the website content as context
             ]
         )
         return chat
     except Exception as e:
         st.error(f"Failed to initialize chatbot: {e}")
         return None
+
 
 
 # Streamlit App
@@ -92,8 +93,9 @@ if content and user_input:
     chat = initialize_chat(content)
     if chat:
         try:
-            # Get response from Gemini API
-            response = chat.send_message(user_input)
+            # Refine the question for better responses
+            refined_input = f"Answer the following question directly: {user_input}"
+            response = chat.send_message(refined_input)
             response_placeholder.write(f"🤖: {response.text}")
         except Exception as e:
             response_placeholder.write(f"Error during chatbot interaction: {e}")
