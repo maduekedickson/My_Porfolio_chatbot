@@ -10,8 +10,9 @@ genai.configure(api_key="AIzaSyDnLRWR5q1Wdcdj1PmZXqKhuypwsrsKGb8")
 # Web scraping the content of the URL
 def get_website_content(url):
     try:
-        response = requests.get(url)
-        response.raise_for_status()  # Ensure the request was successful
+        response = requests.get(url, timeout=10)  # Add a timeout to handle hanging requests
+        response.raise_for_status()  # Raise an error for HTTP error responses
+
         soup = BeautifulSoup(response.content, 'html.parser')
 
         # Extract headings, paragraphs, and lists
@@ -24,9 +25,15 @@ def get_website_content(url):
         content += '\n'.join([para.get_text() for para in paragraphs])
         content += '\n'.join([li.get_text() for list_tag in lists for li in list_tag.find_all('li')])
 
-        return content
+        if not content.strip():
+            return None, "The website does not contain any valid content to extract."
+        
+        return content, None  # Return content and no error
+    except requests.exceptions.RequestException as e:
+        return None, f"Network error: {e}"  # Handle network-related errors
     except Exception as e:
-        return None, f"Error fetching content from the URL: {e}"
+        return None, f"Unexpected error: {e}"  # Handle other exceptions
+
 
 # Initialize the chatbot with content
 def initialize_chat(content):
