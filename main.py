@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import time
 
 # Configure Gemini Pro API
-genai.configure(api_key="AIzaSyDnLRWR5q1Wdcdj1PmZXqKhuypwsrsKGb8")
+genai.configure(api_key="AIzaSyC19s5ue_E4Qt1DDTomHMWuqCinIISzNBc")
 
 # Web scraping the content of the URL
 def get_website_content(url):
