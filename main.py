@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import time
 
 # Configure Gemini Pro API
-genai.configure(api_key="AIzaSyC19s5ue_E4Qt1DDTomHMWuqCinIISzNBc")
+genai.configure(api_key="AIzaSyBQ8QlKYZuYHtg49ojfVSOC92sRs6iDvDo")
 
 # Web scraping the content of the URL
 def get_website_content(url):
@@ -38,7 +38,7 @@ def get_website_content(url):
 # Initialize the chatbot with content
 def initialize_chat(content):
     try:
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-2.5-flash-preview-tts")
         chat = model.start_chat(
             history=[
                 {"role": "user", "parts": ["Hello, I would like to know about the courses offered at Schoolville."]},
