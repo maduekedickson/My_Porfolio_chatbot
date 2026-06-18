@@ -38,7 +38,7 @@ def get_website_content(url):
 # Initialize the chatbot with content
 def initialize_chat(content):
     try:
-        model = genai.GenerativeModel("gemini-2.5-flash-preview-tts")
+        model = genai.GenerativeModel("gemini-3.5-live-translate-preview")
         chat = model.start_chat(
             history=[
                 {"role": "user", "parts": ["Hello, I would like to know about the courses offered at Schoolville."]},
